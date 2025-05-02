@@ -9,7 +9,7 @@ import "hardhat/console.sol";
 contract TokenExchange is Ownable {
     string public exchange_name = 'GAY';
 
-    address tokenAddr = 0xB0D4afd8879eD9F52b28595d31B441D079B2Ca07;                                  // TODO: paste token contract address here
+    address tokenAddr = 0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6;                                  // TODO: paste token contract address here
     Token public token = Token(tokenAddr);                                
 
     // Liquidity pool for the exchange

@@ -4,7 +4,6 @@
 
 
 // TODO: Fill in the authors names.
-
 // Set up Ethers.js
 const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
 const { BigNumber, utils } = ethers;
@@ -26,7 +25,7 @@ function toBig(n) { return BigNumber.from(n.toString()); }
 // TODO: Paste your token and exchange contract ABIs in abi.js!
 
 // TODO: Paste your token contract address here: 
-const token_address = '0xB0D4afd8879eD9F52b28595d31B441D079B2Ca07';      
+const token_address = '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6';      
 const token_abi = [
   {
     "inputs": [],
@@ -596,7 +595,7 @@ const exchange_abi = [
 
 
 
-const exchange_address = '0x162A433068F51e18b7d13932F27e66a3f99E6890';                
+const exchange_address = '0x8A791620dd6260079BF849Dc5567aDC3F2FdC318';                
 const exchange_contract = new ethers.Contract(exchange_address, exchange_abi, provider.getSigner());
 
 
@@ -679,8 +678,6 @@ async function addLiquidity(amountEth, maxSlippagePct) {
               minRate,
               { value: utils.parseUnits(amountEth.toString(), "wei") }
           );
-
-   
 }
 
 /*** REMOVE LIQUIDITY ***/
@@ -993,6 +990,6 @@ const sanityCheck = async function() {
 // Sleep 3s to ensure init() finishes before sanityCheck() runs on first load.
 // If you run into sanityCheck() errors due to init() not finishing, please extend the sleep time.
 
-// setTimeout(function () {
-//   sanityCheck();
-// }, 3000);
+setTimeout(function () {
+  sanityCheck();
+}, 3000);

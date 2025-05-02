@@ -1,3 +1,10 @@
+await token.mint(5000n * 10n ** 18n);
+const token = await ethers.getContractAt("Token", "0x5FbDB2315678afecb367f032d93F642f64180aa3", owner);
+const [owner] = await ethers.getSigners();
+const token = await ethers.getContractAt("Token", "0x5FbDB2315678afecb367f032d93F642f64180aa3", owner);
+const [owner] = await ethers.getSigners();
+const token = await ethers.getContractAt("Token", "0x5FbDB2315678afecb367f032d93F642f64180aa3", owner);
+await token.mint(5000n * 10n ** 18n);
 token.approve(exchange.address, tokensNeeded)
 token.balanceOf(user)
 exchange.token_reserves()

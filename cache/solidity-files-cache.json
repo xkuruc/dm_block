@@ -37,8 +37,8 @@
       ]
     },
     "/Users/kuruckopc/Desktop/BlockChain/zadanie2/kody/contracts/exchange.sol": {
-      "lastModificationDate": 1746101782278,
-      "contentHash": "7a0330d17ae3cee72d90097b9b444a8b",
+      "lastModificationDate": 1746167370533,
+      "contentHash": "b36f3d067acdbc8350da51fc38925f69",
       "sourceName": "contracts/exchange.sol",
       "solcConfig": {
         "version": "0.8.17",
