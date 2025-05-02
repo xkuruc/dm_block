@@ -25,7 +25,7 @@ function toBig(n) { return BigNumber.from(n.toString()); }
 // TODO: Paste your token and exchange contract ABIs in abi.js!
 
 // TODO: Paste your token contract address here: 
-const token_address = '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6';      
+const token_address = '0x3Af511B1bdD6A0377e23796aD6B7391d8De68636';      
 const token_abi = [
   {
     "inputs": [],
@@ -595,7 +595,7 @@ const exchange_abi = [
 
 
 
-const exchange_address = '0x8A791620dd6260079BF849Dc5567aDC3F2FdC318';                
+const exchange_address = '0x1D87585dF4D48E52436e26521a3C5856E4553e3F';                
 const exchange_contract = new ethers.Contract(exchange_address, exchange_abi, provider.getSigner());
 
 
@@ -983,6 +983,9 @@ const sanityCheck = async function() {
           Math.abs(state6.token_liquidity - (state5.token_liquidity - expected_tokens_removed)) < expected_tokens_removed * 1.2 &&
           Number(user_tokens6) > Number(user_tokens5)); 
     }
+    // console.log(Math.abs(state6.eth_liquidity - (state5.eth_liquidity - 90)) < 5);
+    // console.log(Math.abs(state6.token_liquidity - (state5.token_liquidity - expected_tokens_removed)) < expected_tokens_removed * 1.2);
+    // console.log(Number(user_tokens6) > Number(user_tokens5));
     console.log("Final score: " + score + "/50");
 
 }
