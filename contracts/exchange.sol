@@ -9,14 +9,14 @@ import "hardhat/console.sol";
 contract TokenExchange is Ownable {
     string public exchange_name = 'GAY';
 
-    address tokenAddr = 0x3Af511B1bdD6A0377e23796aD6B7391d8De68636;                                  // TODO: paste token contract address here
+    address tokenAddr = 0x5FbDB2315678afecb367f032d93F642f64180aa3;                                  // TODO: paste token contract address here
     Token public token = Token(tokenAddr);                                
 
     // Liquidity pool for the exchange
     uint private token_reserves = 0;
     uint private eth_reserves = 0;
 
-    mapping(address => uint) private lps; 
+    mapping(address => uint) public lps; 
      
     // Needed for looping through the keys of the lps mapping
     address[] private lp_providers;                     
@@ -33,7 +33,13 @@ contract TokenExchange is Ownable {
 
 
     constructor() {}
-    
+
+    // toto treba odkomentovat aby presli testy, a ten prazdny contruktor treba zakomentovat 
+    // constructor(address _token) { token = Token(_token); }
+
+    function lpOf(address who) external view returns (uint) {
+        return lps[who];
+    }
 
     // Function createPool: Initializes a liquidity pool between your Token and ETH.
     // ETH will be sent to pool in this transaction as msg.value

@@ -25,7 +25,7 @@ function toBig(n) { return BigNumber.from(n.toString()); }
 // TODO: Paste your token and exchange contract ABIs in abi.js!
 
 // TODO: Paste your token contract address here: 
-const token_address = '0x3Af511B1bdD6A0377e23796aD6B7391d8De68636';      
+const token_address = '0x5FbDB2315678afecb367f032d93F642f64180aa3';      
 const token_abi = [
   {
     "inputs": [],
@@ -595,7 +595,7 @@ const exchange_abi = [
 
 
 
-const exchange_address = '0x1D87585dF4D48E52436e26521a3C5856E4553e3F';                
+const exchange_address = '0x0165878A594ca255338adfa4d48449f69242Eb8F';                
 const exchange_contract = new ethers.Contract(exchange_address, exchange_abi, provider.getSigner());
 
 
