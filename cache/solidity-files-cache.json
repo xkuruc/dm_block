@@ -37,8 +37,8 @@
       ]
     },
     "/Users/kuruckopc/Desktop/BlockChain/zadanie2/kody/contracts/exchange.sol": {
-      "lastModificationDate": 1746270557208,
-      "contentHash": "e9ef11ff66f09e1a62d2955ce9d577e5",
+      "lastModificationDate": 1746347651756,
+      "contentHash": "5869952afae5f45b7d07a5f610f98c90",
       "sourceName": "contracts/exchange.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -75,8 +75,8 @@
       ]
     },
     "/Users/kuruckopc/Desktop/BlockChain/zadanie2/kody/contracts/token.sol": {
-      "lastModificationDate": 1746096009837,
-      "contentHash": "8d56d0aa3c5ca6fa0815b70ab9d9b3bd",
+      "lastModificationDate": 1746345537849,
+      "contentHash": "b012fe302387ee8599abdb323cb29b51",
       "sourceName": "contracts/token.sol",
       "solcConfig": {
         "version": "0.8.17",

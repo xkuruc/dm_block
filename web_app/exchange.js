@@ -1,5 +1,5 @@
 // =================== FIIT DEX Project =================== // 
-//        @authors:           //
+//        @authors:    Marek Kuruc, Stefanec Peter        //
 // ========================================================= //                  
 
 
@@ -10,10 +10,10 @@ const { BigNumber, utils } = ethers;
 
 var defaultAccount;
 
-const exchange_name = 'GAY';             // TODO: fill in the name of your exchange
+const exchange_name = 'fiitXchange';             // TODO: fill in the name of your exchange
 
-const token_name = 'Gejsex';                // TODO: replace with name of your token
-const token_symbol = 'GAY';              // TODO: replace with symbol for your token
+const token_name = 'cat';                // TODO: replace with name of your token
+const token_symbol = 'CAT';              // TODO: replace with symbol for your token
 const SCALE = 1e18;
 function toBig(n) { return BigNumber.from(n.toString()); }
 
@@ -474,6 +474,63 @@ const exchange_abi = [
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "lpBalances",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "who",
+        "type": "address"
+      }
+    ],
+    "name": "lpOf",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "lps",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "owner",
     "outputs": [
@@ -490,12 +547,12 @@ const exchange_abi = [
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "max_exchange_rate",
+        "name": "maxRate",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "min_exchange_rate",
+        "name": "minRate",
         "type": "uint256"
       }
     ],
@@ -508,17 +565,17 @@ const exchange_abi = [
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "amountETH",
+        "name": "ethOut",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "max_exchange_rate",
+        "name": "maxRate",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "min_exchange_rate",
+        "name": "minRate",
         "type": "uint256"
       }
     ],
@@ -538,7 +595,7 @@ const exchange_abi = [
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "max_exchange_rate",
+        "name": "maxRate",
         "type": "uint256"
       }
     ],
@@ -551,12 +608,12 @@ const exchange_abi = [
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "amountTokens",
+        "name": "amountTok",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "max_exchange_rate",
+        "name": "maxRate",
         "type": "uint256"
       }
     ],
@@ -579,6 +636,19 @@ const exchange_abi = [
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "totalLPSupply",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -595,7 +665,7 @@ const exchange_abi = [
 
 
 
-const exchange_address = '0x0165878A594ca255338adfa4d48449f69242Eb8F';                
+const exchange_address = '0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82';                
 const exchange_contract = new ethers.Contract(exchange_address, exchange_abi, provider.getSigner());
 
 
@@ -647,16 +717,18 @@ async function getPoolState() {
 /*** ADD LIQUIDITY ***/
 async function addLiquidity(amountEth, maxSlippagePct) {
     /** TODO: ADD YOUR CODE HERE **/
+    // pretypujeme vstupy na cisla
     amountEth  = Number(amountEth);
-    const slip = Number(maxSlippagePct) / 100;
+    const slip = Number(maxSlippagePct) / 100; // slip = percento, teda narpiklad 0.07 - 7%
 
+    // ziskame aktualny stav poolu
     const pool = await getPoolState();
-    const rate = pool.token_eth_rate;            // float
+    const rate = pool.token_eth_rate;            // float - tokeny za 1ETRH
 
-    // 1. tokeny musia byť celé – zaokrúhlim dole
+    // 1. kolko tokenov potrebujeme? tokeny musia byt cele – zaokruhlime dole
     const tokensNeeded = Math.floor(amountEth * rate);
 
-    // 2. hranice kurzu × 1e18 → celé číslo → reťazec
+    // 2. hranice kurzu × 1e18 - cele cislo - retazec (prepocitame obidve hranice kurzu pre slipage ochranu)
     const scale   = 1e18;
     const maxRate = BigNumber.from(
         Math.floor(rate * (1 + slip) * scale).toString()
@@ -665,39 +737,44 @@ async function addLiquidity(amountEth, maxSlippagePct) {
         Math.floor(rate * (1 - slip) * scale).toString()
     );
 
-    // 3. schválenie tokenov (tiež celé číslo)
+    // 3. najprv je potrebne odblokovat tokeny na exchange (exchange kontraktu)
     await token_contract
           .connect(provider.getSigner(defaultAccount))
-          .approve(exchange_address, tokensNeeded.toString());
+          .approve(exchange_address, tokensNeeded.toString());  // exchange_address je vlastne ze komu povolujeme
 
-    // 4. ETH v wei – použijem parseUnits, lebo UI zadáva celé wei
+    // 4. ETH v wei – pouzijeme parseUnits, lebo UI zadava cele wei - volanie na samotny smart contract
     await exchange_contract
           .connect(provider.getSigner(defaultAccount))
           .addLiquidity(
-              maxRate,
-              minRate,
-              { value: utils.parseUnits(amountEth.toString(), "wei") }
+              maxRate,  // hhjorna hranica kruz
+              minRate,  // dolna hranica kurzu
+              { value: utils.parseUnits(amountEth.toString(), "wei") }  // objem ETH vo wei
           );
 }
 
 /*** REMOVE LIQUIDITY ***/
 async function removeLiquidity(amountEth, maxSlippagePct) {
     /** TODO: ADD YOUR CODE HERE **/
+    // takisto pretyupujeme vstupy
     amountEth = Number(amountEth);
     const slip = Number(maxSlippagePct) / 100;
 
+
+    // act stav poolu
     const pool = await getPoolState();
     const rate = pool.token_eth_rate;
 
+  // prepocitanie hranic kurzov
     let minRateInt = Math.floor(rate * (1 - slip) * SCALE);
     let maxRateInt = Math.ceil (rate * (1 + slip) * SCALE);
 
-    if (maxRateInt === minRateInt) maxRateInt += 1;
+    if (maxRateInt === minRateInt) maxRateInt += 1; // ak sa zhoduju tak max zvysime o 1, aby sme sa vyhli deleniu nulou
 
+    // zavolaj smart contract
     await exchange_contract
         .connect(provider.getSigner(defaultAccount))
         .removeLiquidity(
-            utils.parseUnits(amountEth.toString(), "wei"),
+            utils.parseUnits(amountEth.toString(), "wei"),  // objem etth , ktore ccheme vybarat
             toBig(maxRateInt),
             toBig(minRateInt)
         );
@@ -709,13 +786,16 @@ async function removeAllLiquidity(maxSlippagePct) {
     /** TODO: ADD YOUR CODE HERE **/
     const slip = Number(maxSlippagePct) / 100;
 
+    // stav poolu
     const pool = await getPoolState();
     const rate = pool.token_eth_rate;
 
+    // hranicne hodnoty kuruz
     let minRateInt = Math.floor(rate * (1 - slip) * SCALE);
     let maxRateInt = Math.ceil (rate * (1 + slip) * SCALE);
     if (maxRateInt === minRateInt) maxRateInt += 1;
 
+    // volame smart kontrakt
     await exchange_contract
         .connect(provider.getSigner(defaultAccount))
         .removeAllLiquidity(
@@ -730,17 +810,22 @@ async function removeAllLiquidity(maxSlippagePct) {
 /*** SWAP ***/
 async function swapTokensForETH(amountToken, maxSlippagePct) {
     /** TODO: ADD YOUR CODE HERE **/
+    // pretypovanie
     amountToken = Number(amountToken);
     const slippage = Number(maxSlippagePct) / 100;
 
+    // stav pooolu
     const pool = await getPoolState();
     const rate = pool.eth_token_rate;           // ETH/token
-    const maxRate = BigInt(Math.floor(rate * (1 + slippage) * 1e18));
+    const maxRate = BigInt(Math.floor(rate * (1 + slippage) * 1e18)); // horna hranica poolu
 
+
+      // povolenie tokenov kontraktu - musi lebo kontrakt si stahuje tokeny
     await token_contract
         .connect(provider.getSigner(defaultAccount))
         .approve(exchange_address, amountToken);
 
+      // zavolanie vlastneho swapu v kontrakte
     await exchange_contract
         .connect(provider.getSigner(defaultAccount))
         .swapTokensForETH(
@@ -752,13 +837,17 @@ async function swapTokensForETH(amountToken, maxSlippagePct) {
 
 async function swapETHForTokens(amountEth, maxSlippagePct) {
     /** TODO: ADD YOUR CODE HERE **/
+    // pretypovanie
     amountEth = Number(amountEth);
     const slippage = Number(maxSlippagePct) / 100;
 
+    // stav poolu
     const pool = await getPoolState();
     const rate = pool.token_eth_rate;           // tok/ETH
-    const minRate = BigInt(Math.floor(rate * (1 - slippage) * 1e18));
 
+    const minRate = BigInt(Math.floor(rate * (1 - slippage) * 1e18)); // dolna hranica poolu
+
+    // zavolame vlastny swap - posielame eth
     await exchange_contract
         .connect(provider.getSigner(defaultAccount))
         .swapETHForTokens(
