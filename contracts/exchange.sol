@@ -30,10 +30,10 @@ contract TokenExchange is Ownable {
     mapping(address => uint) public lpBalances;    // koľko LP vlastní adresa
 
 
-    // constructor() {}
+    constructor() {}
 
     // toto treba odkomentovat aby presli testy, a ten prazdny contruktor treba zakomentovat 
-    constructor(address _token) { token = Token(_token); }
+    // constructor(address _token) { token = Token(_token); }
 
     function lpOf(address who) external view returns (uint) {
         return lps[who];
